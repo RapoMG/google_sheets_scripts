@@ -65,7 +65,7 @@ function prepareList(sn, r){
     idList.push(sourceRange[i][0]);
   };
   return idList;
-}
+};
 
 function getData(sn, r, col, ids){
   const sourceSheet = SpreadsheetApp.getActive().getSheetByName(sn);  
@@ -76,7 +76,7 @@ function getData(sn, r, col, ids){
 
   while (n<ids.length){
     const searchFor = ids[n] 
-    results.push([ids[n]]) // push new array to results list
+    results.push([ids[n]]) // push new array to results list, statring with id
 
     // searching id
     let found = sourceRange.createTextFinder(searchFor).findNext(); //find id line
@@ -99,21 +99,35 @@ function getData(sn, r, col, ids){
     };
     n++;
   }  
-  return results
-}
+  return results;
+};
 
-function fillCells(){}
+function fillCells(sn, col, data){
+  const targetSheet = SpreadsheetApp.getActive().getSheetByName(sn);
+  let i = 10 // starting line
+  
+  for(let n in data){ // number of copied lines
+    for(let x in data[n]){
+      targetSheet.getRange(i,col[x]).setValue(data[n][x]);
+      x++;
+    }
+    n++;  
+    i++;
+  }
+}
 
 // main function
 function filler(){
   /////// CONFIG ////////
   // Form
-  const sfn = "Arkusz2"  // sheet name with form to fill
-  const fr = "b2:b10"  // range in that sheet
-  const fcol = []
+  const sfn = "Arkusz2" // sheet name with form to fill
+  const fr = "b2:b10"   // range in that sheet
+  const fcol = [3,1,5,7]  // colummns to fill //////////////////////////
+  // (id, name, cash, bag)
+
   // Data
   const sdn = "Arkusz1"  // sheet name with source data
-  const dr = "A2:A18"  // searched area with data
+  const dr = "A2:A18"    // searched area with data
   const dcol = [2, 3, 4] // colummns with data
   // ( name, cash, bag)
   /////////////////////
@@ -121,5 +135,6 @@ function filler(){
   // Functions
   list = prepareList(sfn, fr);
   data = getData(sdn, dr, dcol, list);
-  fillCells();
-}
+
+  fillCells(sfn, fcol, data);
+};
