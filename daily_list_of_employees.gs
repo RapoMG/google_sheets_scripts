@@ -80,11 +80,46 @@ function fillCells(sn, col, data){
   };
 };
 
+// Alert pop up
+function notEmpty() {
+  const title = "Lista pracowników";
+  const msg = "Zakres zwróconych pogotowi kasjerskich nie jest pusty. Przygotować listę mimo to?";  
+
+  var result = SpreadsheetApp.getUi().alert(title, msg, SpreadsheetApp.getUi().ButtonSet.OK_CANCEL);
+  if(result == SpreadsheetApp.getUi().Button.OK) {
+    return true;
+  } else {
+    return false;
+  };
+};
+
+// Test new day list
+function isEmpty(sn){
+  var cont = true;
+
+  //name sheet and range
+  const cr = "E2:E10" //exception from config
+  
+  const sourceSheet = SpreadsheetApp.getActive().getSheetByName(sn);  
+  const sourceRange = sourceSheet.getRange(cr).getValues(); 
+
+  //check if range is empty
+  for (let x in sourceRange){if(sourceRange[x] != ''){
+      // call pop up
+      cont = notEmpty()
+      break;
+      };
+  };
+  return cont
+};
+
 // main function
 function filler(){
-  cfg = config()
+  cfg = config();
+
+  if(!isEmpty(cfg[3])){return};
   
-  sort(cfg[1], cfg[2][0])
+  sort(cfg[1], cfg[2][0]);
 
   list = prepareList(cfg[0], cfg[1]);
 
